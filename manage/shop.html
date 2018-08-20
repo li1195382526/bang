@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+        table td{
+            border:1px solid orange;
+            text-align:center;
+        }
+    </style>
+    <script src="js/baiduTemplate.js"></script>
+</head>
+<body>
+<form name="shopform">
+    <input type="text"  name="_id">
+    <p>店铺名称：<input type="text" name="shopName"></p>
+    <p>店铺图片：<input type="file" name="shopPic"><img width="200px" id="myPic" src="" alt=""></p>
+    <p>店铺地址：<input type="text" name="shopUrl"></p>
+    <p>店铺等级：<input type="text" name="shopRank"></p>
+    <p>店铺主营：<input type="text" name="shopMajor"></p>
+    <p>店铺人气：<input type="text" name="shopP"></p>
+    <p>店铺销量：<input type="text" name="shopNum"></p>
+    <p>店铺跳转地址：<input type="text" name="shopUrlz"></p>
+    <p><input type="button" value="添加" id = "btn"></p>
+</form>
+<hr/>
+<input type="text" id="search">
+<hr/>
+<div id="shopList">
+
+</div>
+</body>
+</html>
+<script type="text/html" id="tp">
+    <table>
+        <tr>
+            <td>店铺编号</td>
+            <td>店铺名称</td>
+            <td>店铺图片</td>
+            <td>店铺地址</td>
+            <td>店铺等级</td>
+            <td>店铺主营</td>
+            <td>店铺人气</td>
+            <td>店铺销量</td>
+            <td>店铺跳转地址</td>
+            <td>添加时间</td>
+            <td>修改时间</td>
+            <td>操作</td>
+        </tr>
+        <%for(var i=0;i<shopList.length;i++){%>
+        <tr>
+            <td><%=shopList[i]._id%></td>
+            <td><a href="<%=shopList[i].shopUrl%>" target="_blank"><%=shopList[i].shopName%></a></td>
+            <td><img src="<%=shopList[i].shopPic%>" width="50px" alt=""></td>
+            <td><%=shopList[i].shopUrl%></td>
+            <td><%=shopList[i].shopRank%></td>
+            <td><%=shopList[i].shopMajor%></td>
+            <td><%=shopList[i].shopP%></td>
+            <td><%=shopList[i].shopNum%></td>
+            <td><%=shopList[i].shopUrlz%></td>
+            <td><%=shopList[i].addTime%></td>
+            <td><%=shopList[i].upTime%></td>
+            <td> <a onclick="shopById('<%=shopList[i]._id%>')">修改</a>   <a onclick="deleteshop('<%=shopList[i]._id%>')">删除</a></td>
+        </tr>
+        <%}%>
+    </table>
+    <div id="page">
+        <a onclick="pageBtn(pageIndex-1)" style="display:<%=pageIndex<=1?'none':'inline-block'%>">上一页</a>
+        <%=pageIndex%>/<%=pageSum%>
+        <a  onclick="pageBtn(pageIndex/1+1)"  style="display:<%=pageIndex>=pageSum?'none':'inline-block'%>">下一页</a>
+    </div>
+
+</script>
+<script>
+    var Btn=document.getElementById("btn");
+    var pageIndex=1;
+    var search=document.querySelector("#search");
+    var myPic=document.querySelector("#myPic")
+    getShop();
+    Btn.onclick=function(){
+        var xhr=new XMLHttpRequest();
+        var formData=new FormData(document.querySelector("form"));
+        var method="post";
+        if(formData.get("_id").length>0){
+            method="put";
+        }
+//        console.log(formData.get("goodsName"));
+        xhr.open(method,"http://127.0.0.1/shop");
+        xhr.send(formData);
+        xhr.onload=function(){
+            if(xhr.status==200){
+//                alert(xhr.responseText);
+                var obj=JSON.parse(xhr.responseText);
+                if(obj.ok==1){
+                    if(btn.value=="修改"){
+                        btn.value="添加";
+                        myPic.style.display="none";
+                    }
+                    document.querySelector("form").reset();
+                    getShop();
+                }else{
+                    alert(obj.msg);
+                }
+            }
+        }
+    }
+    search.oninput=getShop;
+    function pageBtn(pageNum){
+        pageIndex=pageNum;
+        getShop();
+    }
+    //删除
+    function deleteshop(id){
+        var xhr=new XMLHttpRequest();
+        xhr.open("delete","http://127.0.0.1/shop?id="+id);
+        xhr.send();
+        xhr.onload=function(){
+            if(xhr.status==200){
+                var obj=JSON.parse(xhr.responseText);
+                if(obj.ok==1){
+                    getShop()
+                }else{
+                    alert(obj.msg);
+                }
+            }
+        }
+    }
+    function getShop(){
+        var xhr=new XMLHttpRequest();
+        xhr.open("get","http://127.0.0.1/shop?pageIndex="+pageIndex+"&keyWord="+search.value);
+        xhr.send();
+        xhr.onload=function(){
+            if(xhr.status==200){
+                var obj=JSON.parse(xhr.responseText);
+//                alert(obj.ok);
+                if(obj.ok==1){
+                    document.querySelector("#shopList").innerHTML=baidu.template("tp",obj);
+
+                }else{
+                    alert(obj.msg);
+                }
+            }
+        }
+    }
+    //    修改时渲染页面
+    function shopById(id){
+        var xhr=new XMLHttpRequest();
+        xhr.open("get","http://127.0.0.1/shopById?id="+id);
+        xhr.send();
+        xhr.onload=function(){
+            if(xhr.status==200){
+                var obj=JSON.parse(xhr.responseText);
+                if(obj.ok==1){
+                    document.shopform.shopName.value=obj.shopInfo.shopName;
+                    document.shopform.shopUrl.value=obj.shopInfo.shopUrl;
+                    document.shopform.shopRank.value=obj.shopInfo.shopRank;
+                    document.shopform.shopMajor.value=obj.shopInfo.shopMajor;
+                    document.shopform.shopP.value=obj.shopInfo.shopP;
+                    document.shopform.shopNum.value=obj.shopInfo.shopNum;
+                    document.shopform.shopUrlz.value=obj.shopInfo.shopUrlz;
+                    document.shopform._id.value=obj.shopInfo._id;
+                    myPic.src=obj.shopInfo.shopPic;
+                    btn.value="修改";
+                    myPic.style.display="block";
+                }
+
+                else
+                    alert(obj.msg);
+            }
+        }
+    }
+</script>

@@ -1,0 +1,29 @@
+html:存放静态资源
+    index.html   同城帮首页。
+mange:对数据的管理--后台
+    advMange.html  广告管理
+    goodsMange.html    商品管理
+    shopMange.html    店铺管理
+api:服务器端提供的接口
+    upload:上传的广告图片都在这里呀
+    server:服务器接口
+
+
+FormData:表单对象
+var form=new FormData();
+form.get(key);//获取值
+form.set(key,value);//设置值。如果key存在，是修改，否则为添加
+form.getAll(key);//获取所有值。返回的是一个数组
+form.append(key,value);//在后面追加。
+
+
+const fs=require("fs");
+//删除指定的文件。第一个参数为文件地址，第二个参数是一个回调函数，告诉你是否删除成功。 err为null时成功，否则失败
+fs.unlink("./upload/upload_b2c5f91974f1a7cca6eb7ba49e45c7bd",function(err){
+    console.log(err);
+})
+//对文件进行重命名。
+fs.rename("upload/upload_e360aea3aecae904ffc2e66f3370913f","upload/12",function(err){
+    console.log(err);
+})
+

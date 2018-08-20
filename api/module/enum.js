@@ -1,0 +1,10 @@
+module.exports.advTypeEnum={
+    "1":"轮播图",
+    "2":"轮播图底部广告位",
+    "3":"精品优先广告",
+    "4":"热门回收广告"
+}
+module.exports.goodsTypeEnum={
+    "1":"热门手机回收",
+    "2":"精品优选",
+}

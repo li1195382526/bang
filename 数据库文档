@@ -1,0 +1,29 @@
+广告管理
+数据库：bang
+1、广告集合 advList
+    1、_id:唯一标识
+    2、advName:广告名字
+    3、advPic:广告图片
+    4、advUrl:广告跳转地址
+    5、advType:广告类别   1、轮播图  2、轮播图底部广告位  3、精品优先广告   4、热门回收广告
+    6、addTime:添加广告的时间
+    7、upTime:修改广告的时间
+    8、orderNum:排序。 数字越大越靠前。默认为0
+2、商品集合 goodsList
+    1、_id:唯一标识
+    2、goodsName:商品名字
+    3、goodsPic:商品图片
+    4.goodsUrl商品地址
+    5.goodType商品类别
+    6.addTime商品添加时间
+    7.upTime商品修改时间
+    8.orderNum排序
+3、店铺集合 shopList
+    1、shopName:店铺名字
+    2、shopPic:店铺图片
+    3、shopUrl:店铺地址
+    4、shopRank:店铺等级
+    5.shopMajor:店铺主营
+    6.shopP:店铺人气
+    7.店铺跳转地址
+    8.shopNum销量
